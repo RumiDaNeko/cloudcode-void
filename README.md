@@ -1,7 +1,7 @@
 # astro-vim
 
 > [!NOTE]
-> **DISCLAIMER**: Status bar rendering is not working but commands work! 
+> **DISCLAIMER**: Status bar rendering is ~~not~~ working ~~but~~ and commands work!
 
 Welcome to the astro-vim page template! This project combines the power of Astro with the efficiency of Vim key bindings to create a unique and fast navigation experience. 
 
