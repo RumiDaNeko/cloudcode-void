@@ -25,8 +25,18 @@ blogPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 </Layout>
 
 <style>
+  .blog-item {
+    @apply rounded p-2 transition-all duration-200 ease-in-out cursor-pointer;
+  }
+
   .blog-item.active {
-    background-color: rgba(0, 0, 0, 0.1);
+    @apply bg-nvim-blue bg-opacity-20 border-l-4 border-nvim-blue pl-3;
+  }
+
+  /* Vim-style cursor indicator */
+  .blog-item.active::before {
+    content: '>';
+    @apply text-nvim-blue font-bold absolute -ml-6;
   }
 </style>
 
@@ -38,13 +48,14 @@ blogPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
     blogItems.forEach((item, index) => {
       if (index === currentIndex) {
         item.classList.add('active');
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } else {
         item.classList.remove('active');
       }
     });
   }
 
-  function moveCursor(direction: any) {
+  function moveCursor(direction: number) {
     currentIndex += direction;
     if (currentIndex < 0) currentIndex = blogItems.length - 1;
     if (currentIndex >= blogItems.length) currentIndex = 0;
@@ -59,14 +70,27 @@ blogPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
   }
 
   document.addEventListener('keydown', (e) => {
+    if (['j', 'k', 'Enter'].includes(e.key)) {
+      e.preventDefault();
+    }
+
     switch(e.key) {
-      case 'j':
+      case 'j': // Move down
         moveCursor(1);
         break;
-      case 'k':
+      case 'k': // Move up
         moveCursor(-1);
         break;
-      case 'Enter':
+      case 'g': // Go to first item
+        currentIndex = 0;
+        updateActiveBlogItem();
+        break;
+      case 'G': // Go to last item
+        currentIndex = blogItems.length - 1;
+        updateActiveBlogItem();
+        break;
+      case 'Enter': // Select current item
+      case 'l': // Vim-like right movement to enter
         enterBlogPost();
         break;
     }
@@ -74,4 +98,15 @@ blogPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   // Initialize the first item as active
   updateActiveBlogItem();
+
+  // Allow click selection as well
+  blogItems.forEach((item, index) => {
+    item.addEventListener('click', (e) => {
+      // Only handle the click on the li element
+      if (e.currentTarget === e.target) {
+        currentIndex = index;
+        updateActiveBlogItem();
+      }
+    });
+  });
 </script>
